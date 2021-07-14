@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Diagnostics;
 
 namespace CRIF_Encrypt
 {
     internal class Program
     {
-        private static string runCrif(string Xpath)
+        private static string EncryptCommand(string Xpath)
         {
             StringBuilder st = new StringBuilder();
             string command;
@@ -14,9 +15,7 @@ namespace CRIF_Encrypt
             command = "/C gpg.exe -v -se  -r CRIF-SWO-PROD  --passphrase \"\"";
             st.Append(command);
             st.Append(" ");
-            st.Append(b);
-            st.Append(Xpath);
-            st.Append(b);
+            st.Append(b + Xpath + b);
             return st.ToString();
         }
 
@@ -31,20 +30,29 @@ namespace CRIF_Encrypt
                + Path.GetFileNameWithoutExtension(args[0])
                + Path.GetExtension(args[0]);
             File.WriteAllText(path, text);
-            Console.WriteLine("(c) Hayk Jomardyan. All rights reserved. \n");
-            Console.WriteLine("... \n " + "Selected file: " + path + "\n");
-            Console.WriteLine("Command: " + runCrif(path) + "\n");
+            Console.WriteLine("     (c) Hayk Jomardyan 2021. All rights reserved.\n");
+            Console.WriteLine("     ... \n " + "Selected file: " + path + "\n");
+            Console.WriteLine("Command: " + EncryptCommand(path) + "\n");
 
-            //System.Diagnostics.Process.Start("CMD.exe", runCrif(path));
+            //simplified:: System.Diagnostics.Process.Start("CMD.exe", EncryptCommand(path));
 
-            System.Diagnostics.Process process = new System.Diagnostics.Process();
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = runCrif(path);
-            process.StartInfo = startInfo;
-            process.Start();
+            try
+            {
+                Process process = new Process();
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.FileName = "cmd.exe";
+                startInfo.Arguments = EncryptCommand(path);
+                process.StartInfo = startInfo;
+                process.Start();
 
-            Console.WriteLine("Finish");
+                Console.WriteLine("Finish");
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine("Error: {0}", e.Message);
+            }
+            
 
             var x = Console.ReadLine();
         }
