@@ -29,7 +29,7 @@ namespace CRIF_Encrypt
                + Path.GetFileNameWithoutExtension(args[0])
                + Path.GetExtension(args[0]);
             File.WriteAllText(path, text);
-            Console.WriteLine("     (c) Hayk Jomardyan 2021. All rights reserved.\n");
+            Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.\n");
             Console.WriteLine("     ... \n " + "Selected file: " + path + "\n");
             Console.WriteLine("     ... \n " + "Selected dir: " + dir + "\n");
             Console.WriteLine("Command: " + SignAndEncrypt(dir, filename) + "\n");
