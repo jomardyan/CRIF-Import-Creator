@@ -13,10 +13,12 @@ namespace CRIF_Encrypt
         private static void Main(string[] args)
         {
             if (args.Length == 0)
-                return; // return if no file was dragged onto exe
+                return; // exit if no file was dragged onto program
             string text = File.ReadAllText(args[0]);
+            if (Path.GetExtension(args[0]) != ".DAT" | Path.GetExtension(args[0]) != ".dat" )
+                return; // exit if no file was dragged file is not .dat
+
             text = text.Replace("~", "~\r\n");
-            
 
             //FOR ZIP PURPOSE
             string dir = Path.GetDirectoryName(args[0])
@@ -29,9 +31,11 @@ namespace CRIF_Encrypt
                + Path.GetFileNameWithoutExtension(args[0])
                + Path.GetExtension(args[0]);
             File.WriteAllText(path, text);
+            Console.ForegroundColor = ConsoleColor.Red; 
             Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.\n");
-            Console.WriteLine("     ... \n " + "Selected file: " + path + "\n");
-            Console.WriteLine("     ... \n " + "Selected dir: " + dir + "\n");
+            Console.ResetColor();
+            Console.WriteLine(" \n " + "--Selected file: " + path + "\n");
+            Console.WriteLine(" \n " + "--Selected dir: " + dir + "\n");
             Console.WriteLine("Command: " + SignAndEncrypt(dir, filename) + "\n");
 
             //simplified:: System.Diagnostics.Process.Start("CMD.exe", EncryptCommand(path));
@@ -93,9 +97,8 @@ namespace CRIF_Encrypt
             cm.Append("a ");
             cm.Append("\"" + ImputDir + FileName + ".zip" + "\" ");
             cm.Append("\"" + ImputDir + FileName + ".dat" + "\"");
-
             Console.WriteLine("----------");
-            Console.WriteLine(cm.ToString());
+            Console.WriteLine("7Z Command:  " + cm.ToString());
             Console.WriteLine("----------");
             try
             {
