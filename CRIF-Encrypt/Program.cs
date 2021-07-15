@@ -16,13 +16,14 @@ namespace CRIF_Encrypt
                 return; // return if no file was dragged onto exe
             string text = File.ReadAllText(args[0]);
             text = text.Replace("~", "~\r\n");
+            
 
             //FOR ZIP PURPOSE
             string dir = Path.GetDirectoryName(args[0])
                + Path.DirectorySeparatorChar;
             string filename = Path.GetFileNameWithoutExtension(args[0]);
             //FOR ZIP PURPOSE END 
-
+            
             string path = Path.GetDirectoryName(args[0])
                + Path.DirectorySeparatorChar
                + Path.GetFileNameWithoutExtension(args[0])
@@ -74,6 +75,7 @@ namespace CRIF_Encrypt
 
         static string SignAndEncrypt(string ImputDir, string FileName)
         {
+            //Long codding in order to be readable.
             StringBuilder st = new StringBuilder();
             string command;
             string b = "\"";
@@ -86,7 +88,7 @@ namespace CRIF_Encrypt
 
         static bool Zipper(string ImputDir, string FileName)
         {
-
+            //Long codding in order to be readable. 
             StringBuilder cm = new StringBuilder();
             cm.Append("a ");
             cm.Append("\"" + ImputDir + FileName + ".zip" + "\" ");
