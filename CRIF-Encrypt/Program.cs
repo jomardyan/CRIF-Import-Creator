@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Diagnostics;
+using System.Threading;
 
 namespace CRIF_Encrypt
 {
@@ -12,7 +13,6 @@ namespace CRIF_Encrypt
         private static void Main(string[] args)
         {
             if (args.Length == 0)
-                Console.WriteLine(""); 
                 return; // return if no file was dragged onto exe
             string text = File.ReadAllText(args[0]);
             text = text.Replace("~", "~\r\n");
@@ -31,34 +31,48 @@ namespace CRIF_Encrypt
             Console.WriteLine("     (c) Hayk Jomardyan 2021. All rights reserved.\n");
             Console.WriteLine("     ... \n " + "Selected file: " + path + "\n");
             Console.WriteLine("     ... \n " + "Selected dir: " + dir + "\n");
-            Console.WriteLine("Command: " + SignAndEncrypt(path) + "\n");
+            Console.WriteLine("Command: " + SignAndEncrypt(dir, filename) + "\n");
 
             //simplified:: System.Diagnostics.Process.Start("CMD.exe", EncryptCommand(path));
 
-            try
+
+
+            //It's time so save the file into fileserver 
+
+            if (Zipper(dir, filename))
             {
-                Process process = new Process();
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = "cmd.exe";
-                startInfo.Arguments = SignAndEncrypt(path);
-                process.StartInfo = startInfo;
-                process.Start();
+                Thread.Sleep(8000);
+                try
+                {
+                    Console.WriteLine("Sign end encrypt...");
+                    Process process = new Process();
+                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    startInfo.FileName = "cmd.exe";
+                    startInfo.Arguments = SignAndEncrypt(dir, filename);
+                    process.StartInfo = startInfo;
+                    process.Start();
 
-                Console.WriteLine("Finish");
+
+                }
+                catch (Exception e)
+                {
+
+                    Console.WriteLine("Error: {0}", e.Message);
+                }
             }
-            catch (Exception e)
+            else
             {
+                Console.WriteLine("Unable to zip");
 
-                Console.WriteLine("Error: {0}", e.Message);
             }
 
 
-
+            Console.WriteLine("Operation completed... ");
             var x = Console.ReadLine();
         }
 
 
-        static string SignAndEncrypt(string Xpath)
+        static string SignAndEncrypt(string ImputDir, string FileName)
         {
             StringBuilder st = new StringBuilder();
             string command;
@@ -66,23 +80,27 @@ namespace CRIF_Encrypt
             command = "/C gpg.exe -v -se  -r CRIF-SWO-PROD  --passphrase \"\"";
             st.Append(command);
             st.Append(" ");
-            st.Append(b + Xpath + b);
+            st.Append(b + ImputDir + FileName + ".zip" + b);
             return st.ToString();
         }
 
-        static bool zipping(string OutputPath, string ImputFile)
+        static bool Zipper(string ImputDir, string FileName)
         {
 
             StringBuilder cm = new StringBuilder();
-            cm.Append("a "); 
-            cm.Append(OutputPath + " ");
-            cm.Append(ImputFile); 
+            cm.Append("a ");
+            cm.Append("\"" + ImputDir + FileName + ".zip" + "\" ");
+            cm.Append("\"" + ImputDir + FileName + ".dat" + "\"");
+
+            Console.WriteLine("----------");
+            Console.WriteLine(cm.ToString());
+            Console.WriteLine("----------");
             try
             {
                 Process process = new Process();
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = "C:\\Program Files\\7-Zip\\7z.exe";
-                startInfo.Arguments = "";
+                startInfo.Arguments = cm.ToString();
                 process.StartInfo = startInfo;
                 process.Start();
                 return true;
