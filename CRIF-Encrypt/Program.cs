@@ -31,7 +31,7 @@ namespace CRIF_Encrypt
             Console.WriteLine("     (c) Hayk Jomardyan 2021. All rights reserved.\n");
             Console.WriteLine("     ... \n " + "Selected file: " + path + "\n");
             Console.WriteLine("     ... \n " + "Selected dir: " + dir + "\n");
-            Console.WriteLine("Command: " + EncryptCommand(path) + "\n");
+            Console.WriteLine("Command: " + SignAndEncrypt(path) + "\n");
 
             //simplified:: System.Diagnostics.Process.Start("CMD.exe", EncryptCommand(path));
 
@@ -40,7 +40,7 @@ namespace CRIF_Encrypt
                 Process process = new Process();
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = "cmd.exe";
-                startInfo.Arguments = EncryptCommand(path);
+                startInfo.Arguments = SignAndEncrypt(path);
                 process.StartInfo = startInfo;
                 process.Start();
 
@@ -58,7 +58,7 @@ namespace CRIF_Encrypt
         }
 
 
-        static string EncryptCommand(string Xpath)
+        static string SignAndEncrypt(string Xpath)
         {
             StringBuilder st = new StringBuilder();
             string command;
