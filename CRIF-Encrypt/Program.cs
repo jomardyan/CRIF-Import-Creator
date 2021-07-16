@@ -92,6 +92,7 @@ namespace CRIF_Encrypt
             Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.\n");
             Console.ResetColor();
             Console.WriteLine("Please wait... \n");
+            Thread.Sleep(500); 
         }
 
         static string SignAndEncrypt(string ImputDir, string FileName)
