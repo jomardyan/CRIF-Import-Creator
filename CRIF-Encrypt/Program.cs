@@ -12,11 +12,22 @@ namespace CRIF_Encrypt
 
         private static void Main(string[] args)
         {
+            StartingPoint();
             if (args.Length == 0)
                 return; // exit if no file was dragged onto program
             string text = File.ReadAllText(args[0]);
-            if (Path.GetExtension(args[0]) != ".DAT" | Path.GetExtension(args[0]) != ".dat" )
-                return; // exit if no file was dragged file is not .dat
+            if (Path.GetExtension(args[0]) is not ".dat" & Path.GetExtension(args[0]) is not ".DAT")
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Imput is not .dat file. ::  Your file -> {0}", Path.GetExtension(args[0]));
+                Console.ReadLine();
+                return; // exit if  the file is not dat. 
+            }
+
+
+
+
+
 
             text = text.Replace("~", "~\r\n");
 
@@ -25,18 +36,17 @@ namespace CRIF_Encrypt
                + Path.DirectorySeparatorChar;
             string filename = Path.GetFileNameWithoutExtension(args[0]);
             //FOR ZIP PURPOSE END 
-            
+
             string path = Path.GetDirectoryName(args[0])
                + Path.DirectorySeparatorChar
                + Path.GetFileNameWithoutExtension(args[0])
                + Path.GetExtension(args[0]);
             File.WriteAllText(path, text);
-            Console.ForegroundColor = ConsoleColor.Red; 
-            Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.\n");
-            Console.ResetColor();
-            Console.WriteLine(" \n " + "--Selected file: " + path + "\n");
-            Console.WriteLine(" \n " + "--Selected dir: " + dir + "\n");
-            Console.WriteLine("Command: " + SignAndEncrypt(dir, filename) + "\n");
+
+            //DEBUG PURPOSE
+            //Console.WriteLine(" \n " + "--Selected file: " + path + "\n");
+            //Console.WriteLine(" \n " + "--Selected dir: " + dir + "\n");
+            //Console.WriteLine("Command: " + SignAndEncrypt(dir, filename) + "\n");
 
             //simplified:: System.Diagnostics.Process.Start("CMD.exe", EncryptCommand(path));
 
@@ -76,6 +86,13 @@ namespace CRIF_Encrypt
             var x = Console.ReadLine();
         }
 
+        private static void StartingPoint()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.\n");
+            Console.ResetColor();
+            Console.WriteLine("Please wait... \n");
+        }
 
         static string SignAndEncrypt(string ImputDir, string FileName)
         {
@@ -98,7 +115,8 @@ namespace CRIF_Encrypt
             cm.Append("\"" + ImputDir + FileName + ".zip" + "\" ");
             cm.Append("\"" + ImputDir + FileName + ".dat" + "\"");
             Console.WriteLine("----------");
-            Console.WriteLine("7Z Command:  " + cm.ToString());
+            //DEBUG PURPOSE
+            //Console.WriteLine("7Z Command:  " + cm.ToString());
             Console.WriteLine("----------");
             try
             {
