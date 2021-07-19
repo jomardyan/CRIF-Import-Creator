@@ -6,12 +6,15 @@ using System.Threading;
 
 namespace CRIF_Encrypt
 {
+
+
     internal class Program
     {
 
-
         private static void Main(string[] args)
         {
+            create(); 
+
             StartingPoint();
             if (args.Length == 0)
                 return; // exit if no file was dragged onto program
@@ -92,7 +95,7 @@ namespace CRIF_Encrypt
             Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.\n");
             Console.ResetColor();
             Console.WriteLine("Please wait... \n");
-            Thread.Sleep(500); 
+            Thread.Sleep(500);
         }
 
         static string SignAndEncrypt(string ImputDir, string FileName)
@@ -139,6 +142,24 @@ namespace CRIF_Encrypt
 
         }
 
+        static void create(string FileName, String Directory)
+        {
+            string text = File.ReadAllText(FileName);
+            text = text.Replace("	", "~^");
+            text = text.ToUTF8();
+            File.WriteAllText("J:\\BI Analysis\\CRIF REPORTS\\CL_SWO2_ICREDIT_20210717_0630.dat", text);
+        }
 
     }
+
+
+    public static class StringExtensions
+    {
+        public static string ToUTF8(this string text)
+        {
+            return Encoding.UTF8.GetString(Encoding.Default.GetBytes(text));
+        }
+    }
+
+
 }
