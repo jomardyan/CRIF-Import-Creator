@@ -13,7 +13,7 @@ namespace CRIF_Encrypt
 
         private static void Main(string[] args)
         {
-            create(); 
+            //create(); 
 
             StartingPoint();
             if (args.Length == 0)
