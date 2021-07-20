@@ -19,15 +19,15 @@ namespace CRIF_Encrypt
             if (args.Length == 0)
                 return; // exit if no file was dragged onto program
             string text = File.ReadAllText(args[0]);
-            
+
             if (Path.GetExtension(args[0]) is not ".txt" & Path.GetExtension(args[0]) is not ".TXT")
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Imput is not .txt file. ::  Your file -> {0}", Path.GetExtension(args[0]));
+                Console.WriteLine("Imput is not .txt file. Use the exported UNICODE TEXT file from excel::  Your file -> {0}", Path.GetExtension(args[0]));
                 Console.ReadLine();
                 return; // exit if  the file is not txt. 
-            } 
-            
+            }
+
             text = text.Replace("~", "~\r\n");
 
             //FOR ZIP PURPOSE
@@ -51,32 +51,27 @@ namespace CRIF_Encrypt
 
             //It's time so save the file into fileserver 
 
-            if (Zipper(dir, filename))
+
+            Thread.Sleep(5000);
+            try
             {
-                Thread.Sleep(5000);
-                try
-                {
-                    Console.WriteLine("Sign end encrypt...");
-                    Process process = new Process();
-                    ProcessStartInfo startInfo = new ProcessStartInfo();
-                    startInfo.FileName = "cmd.exe";
-                    startInfo.Arguments = SignAndEncrypt(dir, filename);
-                    process.StartInfo = startInfo;
-                    process.Start();
+                Console.WriteLine("Sign end encrypt...");
+                Process process = new Process();
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.FileName = "cmd.exe";
+                startInfo.Arguments = SignAndEncrypt(dir, filename);
+                process.StartInfo = startInfo;
+                process.Start();
 
-
-                }
-                catch (Exception e)
-                {
-
-                    Console.WriteLine("Error: {0}", e.Message);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Unable to zip");
 
             }
+            catch (Exception e)
+            {
+
+                Console.WriteLine("Error: {0}", e.Message);
+            }
+
+
 
 
             Console.WriteLine("Operation completed... ");
@@ -105,7 +100,7 @@ namespace CRIF_Encrypt
             return st.ToString();
         }
 
- 
+
         static void ReplaceCrifAndSaveDat(string FileName, String Directory)
         {
 
@@ -120,8 +115,11 @@ namespace CRIF_Encrypt
             Console.WriteLine("Save dir: {0}", DatOutput);
             File.WriteAllText(DatOutput, text);
 
+            Thread.Sleep(1000);
+            string startPath = datdir;
+            string zipPath = Directory + y + ".zip";
 
-
+            ZipFile.CreateFromDirectory(startPath, zipPath);
 
         }
 
@@ -150,15 +148,6 @@ namespace CRIF_Encrypt
             }
             return path;
         }
-
-
-        static bool Zipper(string ImputDir, string FileName)
-        {
-
-
-            return true;
-        }
-
 
 
     }
