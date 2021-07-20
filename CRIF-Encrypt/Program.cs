@@ -42,7 +42,7 @@ namespace CRIF_Encrypt
                + Path.GetExtension(args[0]);
             File.WriteAllText(FileWithExtansion, text);
 
-            ReplaceCrif(FileWithExtansion, dir);
+            ReplaceCrifAndSaveDat(FileWithExtansion, dir);
 
             //DEBUG PURPOSE
             //Console.WriteLine(" \n " + "--Selected file: " + path + "\n");
@@ -108,50 +108,50 @@ namespace CRIF_Encrypt
             return st.ToString();
         }
 
-
-        static void ReplaceCrif(string FileName, String Directory)
+ 
+        static void ReplaceCrifAndSaveDat(string FileName, String Directory)
         {
-            
+
             string y = Path.GetFileNameWithoutExtension(FileName);
             string text = File.ReadAllText(FileName);
             //text = text.ToUTF8();
             text = text.Replace("	", "~^");
 
-            //string DatOutput = Directory + "datdir" + @"\" + y + ".dat" ;
-            string DatOutput = Directory  + y + ".dat" ;
-            Console.WriteLine("DatOutput: "  + DatOutput); 
-            Console.WriteLine("Filename: "  + FileName); 
-            Console.WriteLine("Directory: "  + Directory + "\n"); 
+            var datdir = CreateDatDir(Directory);
+            Thread.Sleep(1000);
+            string DatOutput = datdir + y + ".dat";
+            Console.WriteLine("Save dir: {0}", DatOutput);
             File.WriteAllText(DatOutput, text);
+
+
+
+
         }
 
-        static bool? CreateDirs(String path)
+        static string CreateDatDir(String path)
         {
-
-        try
-        {
-            // Determine whether the directory exists.
-            if (Directory.Exists(path))
+            Console.WriteLine("Creating datdir folder...");
+            path = path + @"datdir\";
+            try
             {
-                Console.WriteLine("That path exists already.");
-                return false;
+                // Determine whether the directory exists.
+                if (Directory.Exists(path))
+                {
+                    Console.WriteLine("That path exists already: " + path);
+                }
+
+                else
+                {
+                    DirectoryInfo di = Directory.CreateDirectory(path);
+                    Console.WriteLine("The directory was created successfully at {0}. Path: {1}", Directory.GetCreationTime(path), (path));
+
+                }
             }
-
-            // Try to create the directory.
-            DirectoryInfo di = Directory.CreateDirectory(path);
-            Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
-
-            // Delete the directory.
-            di.Delete();
-            Console.WriteLine("The directory was deleted successfully.");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("The process failed: {0}", e.ToString());
-        }
-        finally {}
-
-            return true; 
+            catch (Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
+            return path;
         }
 
 
