@@ -4,4 +4,4 @@ Azure Pipelines: [![Build Status](https://jomardyan.visualstudio.com/jomardyan/_
 
 Windows: [![.NET](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetWindows.yml/badge.svg)](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetWindows.yml)
 
-Ubuntu: [![.NET](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnet.yml/badge.svg)](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnet.yml)
+Ubuntu: [![.NET](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetUbuntu.yml/badge.svg)](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetUbuntu.yml)
