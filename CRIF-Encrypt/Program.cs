@@ -19,15 +19,15 @@ namespace CRIF_Encrypt
             if (args.Length == 0)
                 return; // exit if no file was dragged onto program
             string text = File.ReadAllText(args[0]);
-            /*
-            if (Path.GetExtension(args[0]) is not ".dat" & Path.GetExtension(args[0]) is not ".DAT")
+            
+            if (Path.GetExtension(args[0]) is not ".txt" & Path.GetExtension(args[0]) is not ".TXT")
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Imput is not .dat file. ::  Your file -> {0}", Path.GetExtension(args[0]));
+                Console.WriteLine("Imput is not .txt file. ::  Your file -> {0}", Path.GetExtension(args[0]));
                 Console.ReadLine();
-                return; // exit if  the file is not dat. 
+                return; // exit if  the file is not txt. 
             } 
-            */
+            
             text = text.Replace("~", "~\r\n");
 
             //FOR ZIP PURPOSE
@@ -48,9 +48,6 @@ namespace CRIF_Encrypt
             //Console.WriteLine(" \n " + "--Selected file: " + path + "\n");
             //Console.WriteLine(" \n " + "--Selected dir: " + dir + "\n");
             //Console.WriteLine("Command: " + SignAndEncrypt(dir, filename) + "\n");
-
-
-
 
             //It's time so save the file into fileserver 
 
