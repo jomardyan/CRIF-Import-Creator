@@ -44,8 +44,9 @@ namespace CRIF_Encrypt
                 startInfo.FileName = "cmd.exe";
                 startInfo.Arguments = SignAndEncrypt(ImputDirectory, FileName);
                 process.StartInfo = startInfo;
-                process.Start();
 
+                process.Start();
+                process.WaitForExit();
 
             }
             catch (Exception e)
@@ -54,10 +55,10 @@ namespace CRIF_Encrypt
                 Console.WriteLine("Error: {0}", e.Message);
             }
 
+            Console.WriteLine("--------------SIGN AND ENCRYPT FINISEHD-------------------");
+            Console.WriteLine("---------All operations completed successfully------------");
+            Console.WriteLine("Type any key to exit...");
 
-
-
-            Console.WriteLine("Operation completed... ");
             var x = Console.ReadLine();
         }
 
