@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Diagnostics;
 using System.Threading;
+using System.IO.Compression;
 
 namespace CRIF_Encrypt
 {
@@ -13,45 +14,41 @@ namespace CRIF_Encrypt
 
         private static void Main(string[] args)
         {
-            //create(); 
 
             StartingPoint();
             if (args.Length == 0)
                 return; // exit if no file was dragged onto program
             string text = File.ReadAllText(args[0]);
+            /*
             if (Path.GetExtension(args[0]) is not ".dat" & Path.GetExtension(args[0]) is not ".DAT")
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Imput is not .dat file. ::  Your file -> {0}", Path.GetExtension(args[0]));
                 Console.ReadLine();
                 return; // exit if  the file is not dat. 
-            }
-
-
-
-
-
-
+            } 
+            */
             text = text.Replace("~", "~\r\n");
 
             //FOR ZIP PURPOSE
             string dir = Path.GetDirectoryName(args[0])
                + Path.DirectorySeparatorChar;
             string filename = Path.GetFileNameWithoutExtension(args[0]);
-            //FOR ZIP PURPOSE END 
 
-            string path = Path.GetDirectoryName(args[0])
+
+            string FileWithExtansion = Path.GetDirectoryName(args[0])
                + Path.DirectorySeparatorChar
                + Path.GetFileNameWithoutExtension(args[0])
                + Path.GetExtension(args[0]);
-            File.WriteAllText(path, text);
+            File.WriteAllText(FileWithExtansion, text);
+
+            ReplaceCrif(FileWithExtansion, dir);
 
             //DEBUG PURPOSE
             //Console.WriteLine(" \n " + "--Selected file: " + path + "\n");
             //Console.WriteLine(" \n " + "--Selected dir: " + dir + "\n");
             //Console.WriteLine("Command: " + SignAndEncrypt(dir, filename) + "\n");
 
-            //simplified:: System.Diagnostics.Process.Start("CMD.exe", EncryptCommand(path));
 
 
 
@@ -59,7 +56,7 @@ namespace CRIF_Encrypt
 
             if (Zipper(dir, filename))
             {
-                Thread.Sleep(8000);
+                Thread.Sleep(5000);
                 try
                 {
                     Console.WriteLine("Sign end encrypt...");
@@ -111,44 +108,61 @@ namespace CRIF_Encrypt
             return st.ToString();
         }
 
-        static bool Zipper(string ImputDir, string FileName)
-        {
-            //Long codding in order to be readable. 
-            StringBuilder cm = new StringBuilder();
-            cm.Append("a ");
-            cm.Append("\"" + ImputDir + FileName + ".zip" + "\" ");
-            cm.Append("\"" + ImputDir + FileName + ".dat" + "\"");
-            Console.WriteLine("----------");
-            //DEBUG PURPOSE
-            //Console.WriteLine("7Z Command:  " + cm.ToString());
-            Console.WriteLine("----------");
-            try
-            {
-                Process process = new Process();
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = "C:\\Program Files\\7-Zip\\7z.exe";
-                startInfo.Arguments = cm.ToString();
-                process.StartInfo = startInfo;
-                process.Start();
-                return true;
-            }
-            catch (Exception e)
-            {
 
-                Console.WriteLine("Error: {0}", e.Message);
+        static void ReplaceCrif(string FileName, String Directory)
+        {
+            
+            string y = Path.GetFileNameWithoutExtension(FileName);
+            string text = File.ReadAllText(FileName);
+            //text = text.ToUTF8();
+            text = text.Replace("	", "~^");
+
+            //string DatOutput = Directory + "datdir" + @"\" + y + ".dat" ;
+            string DatOutput = Directory  + y + ".dat" ;
+            Console.WriteLine("DatOutput: "  + DatOutput); 
+            Console.WriteLine("Filename: "  + FileName); 
+            Console.WriteLine("Directory: "  + Directory + "\n"); 
+            File.WriteAllText(DatOutput, text);
+        }
+
+        static bool? CreateDirs(String path)
+        {
+
+        try
+        {
+            // Determine whether the directory exists.
+            if (Directory.Exists(path))
+            {
+                Console.WriteLine("That path exists already.");
                 return false;
             }
 
+            // Try to create the directory.
+            DirectoryInfo di = Directory.CreateDirectory(path);
+            Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
 
+            // Delete the directory.
+            di.Delete();
+            Console.WriteLine("The directory was deleted successfully.");
         }
-
-        static void create(string FileName, String Directory)
+        catch (Exception e)
         {
-            string text = File.ReadAllText(FileName);
-            text = text.Replace("	", "~^");
-            text = text.ToUTF8();
-            File.WriteAllText("J:\\BI Analysis\\CRIF REPORTS\\CL_SWO2_ICREDIT_20210717_0630.dat", text);
+            Console.WriteLine("The process failed: {0}", e.ToString());
         }
+        finally {}
+
+            return true; 
+        }
+
+
+        static bool Zipper(string ImputDir, string FileName)
+        {
+
+
+            return true;
+        }
+
+
 
     }
 
