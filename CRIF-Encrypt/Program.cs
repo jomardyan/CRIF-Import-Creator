@@ -8,17 +8,15 @@ using System.IO.Compression;
 namespace CRIF_Encrypt
 {
 
-
     internal class Program
     {
 
         private static void Main(string[] args)
         {
-
             StartingPoint();
             if (args.Length == 0)
                 return; // exit if no file was dragged onto program
-            string text = File.ReadAllText(args[0]);
+            string ArgumentImputText = File.ReadAllText(args[0]);
 
             if (Path.GetExtension(args[0]) is not ".txt" & Path.GetExtension(args[0]) is not ".TXT")
             {
@@ -28,30 +26,15 @@ namespace CRIF_Encrypt
                 return; // exit if  the file is not txt. 
             }
 
-            text = text.Replace("~", "~\r\n");
+            //Directories
+            string ImputDirectory = Path.GetDirectoryName(args[0]) + Path.DirectorySeparatorChar;
+            string FileName = Path.GetFileNameWithoutExtension(args[0]);
+            string FileWithExtansion = Path.GetDirectoryName(args[0]) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(args[0]) + Path.GetExtension(args[0]);
 
-            //FOR ZIP PURPOSE
-            string dir = Path.GetDirectoryName(args[0])
-               + Path.DirectorySeparatorChar;
-            string filename = Path.GetFileNameWithoutExtension(args[0]);
+            File.WriteAllText(FileWithExtansion, ArgumentImputText);
+            ReplaceCrifAndSaveDat(FileWithExtansion, ImputDirectory);
 
-
-            string FileWithExtansion = Path.GetDirectoryName(args[0])
-               + Path.DirectorySeparatorChar
-               + Path.GetFileNameWithoutExtension(args[0])
-               + Path.GetExtension(args[0]);
-            File.WriteAllText(FileWithExtansion, text);
-
-            ReplaceCrifAndSaveDat(FileWithExtansion, dir);
-
-            //DEBUG PURPOSE
-            //Console.WriteLine(" \n " + "--Selected file: " + path + "\n");
-            //Console.WriteLine(" \n " + "--Selected dir: " + dir + "\n");
-            //Console.WriteLine("Command: " + SignAndEncrypt(dir, filename) + "\n");
-
-            //It's time so save the file into fileserver 
-
-
+            //It's time so save the file into fileserver
             Thread.Sleep(5000);
             try
             {
@@ -59,7 +42,7 @@ namespace CRIF_Encrypt
                 Process process = new Process();
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = "cmd.exe";
-                startInfo.Arguments = SignAndEncrypt(dir, filename);
+                startInfo.Arguments = SignAndEncrypt(ImputDirectory, FileName);
                 process.StartInfo = startInfo;
                 process.Start();
 
@@ -99,8 +82,6 @@ namespace CRIF_Encrypt
             st.Append(b + ImputDir + FileName + ".zip" + b);
             return st.ToString();
         }
-
-
         static void ReplaceCrifAndSaveDat(string FileName, String Directory)
         {
 
@@ -109,20 +90,24 @@ namespace CRIF_Encrypt
             //text = text.ToUTF8();
             text = text.Replace("	", "~^");
 
+            //Remove fisrt and last line from EXCEL export  TXT file. 
+            int index = text.IndexOf(System.Environment.NewLine);
+            var newText = text.Substring(index + System.Environment.NewLine.Length);
+            newText = newText.Remove(newText.TrimEnd().LastIndexOf(Environment.NewLine));
+
             var datdir = CreateDatDir(Directory);
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
             string DatOutput = datdir + y + ".dat";
             Console.WriteLine("Save dir: {0}", DatOutput);
-            File.WriteAllText(DatOutput, text);
+            File.WriteAllText(DatOutput, newText);
 
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
             string startPath = datdir;
             string zipPath = Directory + y + ".zip";
 
             ZipFile.CreateFromDirectory(startPath, zipPath);
 
         }
-
         static string CreateDatDir(String path)
         {
             Console.WriteLine("Creating datdir folder...");
@@ -148,11 +133,7 @@ namespace CRIF_Encrypt
             }
             return path;
         }
-
-
     }
-
-
     public static class StringExtensions
     {
         public static string ToUTF8(this string text)
