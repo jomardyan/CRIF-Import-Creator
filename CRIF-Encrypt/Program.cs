@@ -89,7 +89,7 @@ namespace CRIF_Encrypt
             string y = Path.GetFileNameWithoutExtension(FileName);
             string text = File.ReadAllText(FileName);
             //text = text.ToUTF8();
-            text = text.Replace("	", "~^");
+            text = text.Replace("	", "^~");
 
             //Remove fisrt and last line from EXCEL export  TXT file. 
             int index = text.IndexOf(System.Environment.NewLine);
