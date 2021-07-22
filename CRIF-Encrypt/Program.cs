@@ -44,7 +44,6 @@ namespace CRIF_Encrypt
                 startInfo.FileName = "cmd.exe";
                 startInfo.Arguments = SignAndEncrypt(ImputDirectory, FileName);
                 process.StartInfo = startInfo;
-
                 process.Start();
                 process.WaitForExit();
 
@@ -85,28 +84,36 @@ namespace CRIF_Encrypt
         }
         static void ReplaceCrifAndSaveDat(string FileName, String Directory)
         {
+            try
+            {
+                string y = Path.GetFileNameWithoutExtension(FileName);
+                string text = File.ReadAllText(FileName);
+                //text = text.ToUTF8();
+                text = text.Replace("	", "^~");
 
-            string y = Path.GetFileNameWithoutExtension(FileName);
-            string text = File.ReadAllText(FileName);
-            //text = text.ToUTF8();
-            text = text.Replace("	", "^~");
+                //Remove fisrt and last line from EXCEL export  TXT file. 
+                int index = text.IndexOf(System.Environment.NewLine);
+                var newText = text.Substring(index + System.Environment.NewLine.Length);
+                newText = newText.Remove(newText.TrimEnd().LastIndexOf(Environment.NewLine));
 
-            //Remove fisrt and last line from EXCEL export  TXT file. 
-            int index = text.IndexOf(System.Environment.NewLine);
-            var newText = text.Substring(index + System.Environment.NewLine.Length);
-            newText = newText.Remove(newText.TrimEnd().LastIndexOf(Environment.NewLine));
+                var datdir = CreateDatDir(Directory);
+                Thread.Sleep(500);
+                string DatOutput = datdir + y + ".dat";
+                File.WriteAllText(DatOutput, newText);
+                Console.WriteLine("Saved: {0}", DatOutput);
+                Thread.Sleep(500);
+                string startPath = datdir;
+                string zipPath = Directory + y + ".zip";
 
-            var datdir = CreateDatDir(Directory);
-            Thread.Sleep(500);
-            string DatOutput = datdir + y + ".dat";
-            Console.WriteLine("Save dir: {0}", DatOutput);
-            File.WriteAllText(DatOutput, newText);
+                ZipFile.CreateFromDirectory(startPath, zipPath);
+            }
+            catch (System.Exception e)
+            {
 
-            Thread.Sleep(500);
-            string startPath = datdir;
-            string zipPath = Directory + y + ".zip";
+                Console.WriteLine("Errr: {0}", e.ToString()); 
+            }
 
-            ZipFile.CreateFromDirectory(startPath, zipPath);
+
 
         }
         static string CreateDatDir(String path)
