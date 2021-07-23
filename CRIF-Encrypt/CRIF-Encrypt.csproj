@@ -4,6 +4,16 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>CRIF_Encrypt</RootNamespace>
+    <ApplicationIcon>database.ico</ApplicationIcon>
+    <Version>1.0.2</Version>
+    <Authors>Hayk Jomardyan</Authors>
+    <Copyright>JHC</Copyright>
+    <PackageLicenseExpression />
+    <PackageProjectUrl>https://github.com/jomardyan/CRIF-Import-Creator</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jomardyan/CRIF-Import-Creator</RepositoryUrl>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>HaykKey.pfx</AssemblyOriginatorKeyFile>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
 </Project>

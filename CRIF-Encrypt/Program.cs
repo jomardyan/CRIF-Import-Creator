@@ -15,7 +15,11 @@ namespace CRIF_Encrypt
         {
             StartingPoint();
             if (args.Length == 0)
-                return; // exit if no file was dragged onto program
+            {
+                Console.WriteLine("Please drag a file onto program or use a file as an argument.");
+                Thread.Sleep(10000);
+                Environment.Exit(0);
+            }
             string ArgumentImputText = File.ReadAllText(args[0]);
 
             if (Path.GetExtension(args[0]) is not ".txt" & Path.GetExtension(args[0]) is not ".TXT")
@@ -66,8 +70,8 @@ namespace CRIF_Encrypt
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.\n");
             Console.ResetColor();
-            Console.WriteLine("Please wait... \n");
-            Thread.Sleep(500);
+            Console.WriteLine("Initializing, please  wait... \n");
+            Thread.Sleep(555);
         }
 
         static string SignAndEncrypt(string ImputDir, string FileName)
