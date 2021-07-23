@@ -57,8 +57,7 @@ namespace CRIF_Encrypt
             Console.WriteLine("--------------SIGN AND ENCRYPT FINISEHD-------------------");
             Console.WriteLine("---------All operations completed successfully------------");
             Console.WriteLine("Type any key to exit...");
-
-            var x = Console.ReadLine();
+            _ = Console.ReadLine();
         }
 
         private static void StartingPoint()
