@@ -141,6 +141,15 @@ namespace CRIF_Encrypt
             }
             return path;
         }
+
+        // ToDo
+        public static bool SentToFTP()
+        {
+            //Implement send to CRIF FTP SERVER
+            return true; 
+
+        }
+
     }
     public static class StringExtensions
     {
@@ -149,6 +158,7 @@ namespace CRIF_Encrypt
             return Encoding.UTF8.GetString(Encoding.Default.GetBytes(text));
         }
     }
+
 
 
 }
