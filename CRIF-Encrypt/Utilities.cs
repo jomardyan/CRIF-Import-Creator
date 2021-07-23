@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace CRIF_Encrypt
 {
     public static class Utilities
     {
-
         public static string ToUTF8(this string text)
         {
             return Encoding.UTF8.GetString(Encoding.Default.GetBytes(text));
@@ -26,7 +22,6 @@ namespace CRIF_Encrypt
             Thread.Sleep(555);
         }
 
-
         public static string SignAndEncrypt(string ImputDir, string FileName)
         {
             //Long codding in order to be readable.
@@ -39,7 +34,6 @@ namespace CRIF_Encrypt
             st.Append(b + ImputDir + FileName + ".zip" + b);
             return st.ToString();
         }
-
 
         public static string CreateDatDir(String path)
         {
@@ -64,7 +58,6 @@ namespace CRIF_Encrypt
             }
             return path;
         }
-
 
         public static void ReplaceCrifAndSaveDat(string FileName, String Directory)
         {
@@ -96,6 +89,5 @@ namespace CRIF_Encrypt
                 Console.WriteLine("Errr: {0}", e.ToString());
             }
         }
-
     }
 }

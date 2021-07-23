@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
-using System.Text;
 using System.Threading;
 
 namespace CRIF_Encrypt
 {
-   
-
     internal class Program
     {
         // ToDo
@@ -17,8 +13,6 @@ namespace CRIF_Encrypt
             //Implement send to CRIF FTP SERVER
             return true;
         }
-
-        
 
         private static void Main(string[] args)
         {
@@ -49,6 +43,7 @@ namespace CRIF_Encrypt
 
             //It's time so save the file into fileserver
             Thread.Sleep(3000);
+            //Try Sign end encrypt
             try
             {
                 Console.WriteLine("Sign end encrypt...");
@@ -70,11 +65,5 @@ namespace CRIF_Encrypt
             Console.WriteLine("Type any key to exit...");
             _ = Console.ReadLine();
         }
-
-        
-
-        
-
-        
     }
 }
