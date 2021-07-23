@@ -1,16 +1,14 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 using System.Diagnostics;
-using System.Threading;
+using System.IO;
 using System.IO.Compression;
+using System.Text;
+using System.Threading;
 
 namespace CRIF_Encrypt
 {
-
     internal class Program
     {
-
         private static void Main(string[] args)
         {
             StartingPoint();
@@ -27,7 +25,7 @@ namespace CRIF_Encrypt
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Imput is not .txt file. Use the exported UNICODE TEXT file from excel::  Your file -> {0}", Path.GetExtension(args[0]));
                 Console.ReadLine();
-                return; // exit if  the file is not txt. 
+                return; // exit if  the file is not txt.
             }
 
             //Directories
@@ -50,11 +48,9 @@ namespace CRIF_Encrypt
                 process.StartInfo = startInfo;
                 process.Start();
                 process.WaitForExit();
-
             }
             catch (Exception e)
             {
-
                 Console.WriteLine("Error: {0}", e.Message);
             }
 
@@ -74,7 +70,7 @@ namespace CRIF_Encrypt
             Thread.Sleep(555);
         }
 
-        static string SignAndEncrypt(string ImputDir, string FileName)
+        private static string SignAndEncrypt(string ImputDir, string FileName)
         {
             //Long codding in order to be readable.
             StringBuilder st = new StringBuilder();
@@ -86,7 +82,8 @@ namespace CRIF_Encrypt
             st.Append(b + ImputDir + FileName + ".zip" + b);
             return st.ToString();
         }
-        static void ReplaceCrifAndSaveDat(string FileName, String Directory)
+
+        private static void ReplaceCrifAndSaveDat(string FileName, String Directory)
         {
             try
             {
@@ -95,7 +92,7 @@ namespace CRIF_Encrypt
                 //text = text.ToUTF8();
                 text = text.Replace("	", "^~");
 
-                //Remove fisrt and last line from EXCEL export  TXT file. 
+                //Remove fisrt and last line from EXCEL export  TXT file.
                 int index = text.IndexOf(System.Environment.NewLine);
                 var newText = text.Substring(index + System.Environment.NewLine.Length);
                 newText = newText.Remove(newText.TrimEnd().LastIndexOf(Environment.NewLine));
@@ -113,14 +110,11 @@ namespace CRIF_Encrypt
             }
             catch (System.Exception e)
             {
-
-                Console.WriteLine("Errr: {0}", e.ToString()); 
+                Console.WriteLine("Errr: {0}", e.ToString());
             }
-
-
-
         }
-        static string CreateDatDir(String path)
+
+        private static string CreateDatDir(String path)
         {
             Console.WriteLine("Creating datdir folder...");
             path = path + @"datdir\";
@@ -131,12 +125,10 @@ namespace CRIF_Encrypt
                 {
                     Console.WriteLine("That path exists already: " + path);
                 }
-
                 else
                 {
                     DirectoryInfo di = Directory.CreateDirectory(path);
                     Console.WriteLine("The directory was created successfully at {0}. Path: {1}", Directory.GetCreationTime(path), (path));
-
                 }
             }
             catch (Exception e)
@@ -150,11 +142,10 @@ namespace CRIF_Encrypt
         public static bool SentToFTP()
         {
             //Implement send to CRIF FTP SERVER
-            return true; 
-
+            return true;
         }
-
     }
+
     public static class StringExtensions
     {
         public static string ToUTF8(this string text)
@@ -162,7 +153,4 @@ namespace CRIF_Encrypt
             return Encoding.UTF8.GetString(Encoding.Default.GetBytes(text));
         }
     }
-
-
-
 }
