@@ -14,11 +14,12 @@ Create CRIF compatible import file according documentation using EXCEL Unicode e
 
 **How the program work**
 
-1. **Connvert TXT file into UTF-8**
-2. **Adding ^~ separator**
-3. **Convert to .DAT**
+1. **Connvert encoding into UTF-8**
+2. **Add ^~ separator**
+3. **Convert to .DAT file**
 4. **Packing into ZIP Archive**
 5. **Sign and encrypt (program will ask you to type sign password)**
+6. **More features soon...**
 
 **Program run requirement**
 

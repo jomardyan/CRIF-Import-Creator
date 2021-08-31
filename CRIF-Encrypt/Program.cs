@@ -19,7 +19,7 @@ namespace CRIF_Encrypt
             Utilities.StartingPoint();
             if (args.Length == 0)
             {
-                Console.WriteLine("Please drag a file onto program or use a file as an argument.");
+                Console.WriteLine("Please drag a file onto program or pass the file as an argument.");
                 Thread.Sleep(10000);
                 Environment.Exit(0);
             }
