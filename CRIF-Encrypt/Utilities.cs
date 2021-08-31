@@ -4,6 +4,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Threading;
 
+
 namespace CRIF_Encrypt
 {
     public static class Utilities

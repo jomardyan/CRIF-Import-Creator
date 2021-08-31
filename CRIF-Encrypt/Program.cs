@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
+
 namespace CRIF_Encrypt
 {
     internal class Program
