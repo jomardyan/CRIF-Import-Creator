@@ -43,7 +43,7 @@ namespace CRIF_Encrypt
             Utilities.ReplaceCrifAndSaveDat(FileWithExtansion, ImputDirectory);
 
             //It's time so save the file into fileserver
-            Thread.Sleep(3000);
+            Thread.Sleep(500);
             //Try Sign end encrypt
             try
             {

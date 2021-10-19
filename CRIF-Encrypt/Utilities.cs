@@ -25,6 +25,7 @@ namespace CRIF_Encrypt
 
         public static string SignAndEncrypt(string ImputDir, string FileName)
         {
+            string y = Path.GetFileNameWithoutExtension(FileName);
             //Long codding in order to be readable.
             StringBuilder st = new StringBuilder();
             string command;
@@ -32,14 +33,14 @@ namespace CRIF_Encrypt
             command = "/C gpg.exe -v -se  -r CRIF-SWO-PROD  --passphrase \"\"";
             st.Append(command);
             st.Append(" ");
-            st.Append(b + ImputDir + FileName + ".zip" + b);
+            st.Append(b + ImputDir + y + @"\" + FileName + ".zip" + b);
             return st.ToString();
         }
 
-        public static string CreateDatDir(String path)
+        public static string CreateDatDir(String path, string FileName)
         {
             Console.WriteLine("Creating datdir folder...");
-            path = path + @"datdir\";
+            path = path + FileName + @"\"+ FileName + @"\";
             try
             {
                 // Determine whether the directory exists.
@@ -74,15 +75,16 @@ namespace CRIF_Encrypt
                 var newText = text.Substring(index + System.Environment.NewLine.Length);
                 newText = newText.Remove(newText.TrimEnd().LastIndexOf(Environment.NewLine));
 
-                var datdir = CreateDatDir(Directory);
+                var datdir = CreateDatDir(Directory, y);
                 Thread.Sleep(500);
                 string DatOutput = datdir + y + ".dat";
                 File.WriteAllText(DatOutput, newText);
                 Console.WriteLine("Saved: {0}", DatOutput);
                 Thread.Sleep(500);
                 string startPath = datdir;
-                string zipPath = Directory + y + ".zip";
-
+                string zipPath = Directory + y + @"\" + y + ".zip";
+                
+                Console.WriteLine("OOOOOOOOOOO " + zipPath);
                 ZipFile.CreateFromDirectory(startPath, zipPath);
             }
             catch (System.Exception e)
