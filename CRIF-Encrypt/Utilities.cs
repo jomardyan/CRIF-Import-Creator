@@ -17,7 +17,7 @@ namespace CRIF_Encrypt
         public static void StartingPoint()
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.\n");
+            Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.  v14 \n");
             Console.ResetColor();
             Console.WriteLine("Initializing, please  wait... \n");
             Thread.Sleep(555);
@@ -84,8 +84,10 @@ namespace CRIF_Encrypt
                 string startPath = datdir;
                 string zipPath = Directory + y + @"\" + y + ".zip";
                 
-                Console.WriteLine("OOOOOOOOOOO " + zipPath);
+                Console.WriteLine("ZIP PATH:  " + zipPath);
                 ZipFile.CreateFromDirectory(startPath, zipPath);
+                
+                System.IO.Directory.Delete(datdir,true);
             }
             catch (System.Exception e)
             {

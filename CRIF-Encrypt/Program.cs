@@ -17,6 +17,10 @@ namespace CRIF_Encrypt
 
         private static void Main(string[] args)
         {
+            if (args.Length != 0)
+            {
+                Console.WriteLine("Passed Argument: " + args[0]);
+            }
             Utilities.StartingPoint();
             if (args.Length == 0)
             {
@@ -29,7 +33,7 @@ namespace CRIF_Encrypt
             if (Path.GetExtension(args[0]) is not ".txt" & Path.GetExtension(args[0]) is not ".TXT")
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Imput is not .txt file. Use the exported UNICODE TEXT file from excel::  Your file -> {0}", Path.GetExtension(args[0]));
+                Console.WriteLine("Imput is not .txt file. Use the exported UNICODE TEXT file from excel::  Your file is -> {0}", Path.GetExtension(args[0]));
                 Console.ReadLine();
                 return; // exit if  the file is not txt.
             }
