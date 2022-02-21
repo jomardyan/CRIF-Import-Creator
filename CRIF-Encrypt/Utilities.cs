@@ -17,13 +17,13 @@ namespace CRIF_Encrypt
         public static void StartingPoint()
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.  v14 \n");
+            Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.  v15 \n");
             Console.ResetColor();
             Console.WriteLine("Initializing, please  wait... \n");
-            Thread.Sleep(555);
+            Thread.Sleep(100);
         }
 
-        public static string SignAndEncrypt(string ImputDir, string FileName)
+        public static string SignAndEncrypt(string InputDir, string FileName)
         {
             string y = Path.GetFileNameWithoutExtension(FileName);
             //Long codding in order to be readable.
@@ -33,7 +33,7 @@ namespace CRIF_Encrypt
             command = "/C gpg.exe -v -se  -r CRIF-SWO-PROD  --passphrase \"\"";
             st.Append(command);
             st.Append(" ");
-            st.Append(b + ImputDir + y + @"\" + FileName + ".zip" + b);
+            st.Append(b + InputDir + y + @"\" + FileName + ".zip" + b);
             return st.ToString();
         }
 
@@ -70,7 +70,7 @@ namespace CRIF_Encrypt
                 //text = text.ToUTF8();
                 text = text.Replace("	", "^~");
 
-                //Remove fisrt and last line from EXCEL export  TXT file.
+                //Remove first and last line from EXCEL export  TXT file.
                 int index = text.IndexOf(System.Environment.NewLine);
                 var newText = text.Substring(index + System.Environment.NewLine.Length);
                 newText = newText.Remove(newText.TrimEnd().LastIndexOf(Environment.NewLine));
@@ -91,7 +91,7 @@ namespace CRIF_Encrypt
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("Errr: {0}", e.ToString());
+                Console.WriteLine("Error: {0}", e.ToString());
             }
         }
     }

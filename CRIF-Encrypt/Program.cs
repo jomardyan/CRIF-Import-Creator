@@ -28,23 +28,23 @@ namespace CRIF_Encrypt
                 Thread.Sleep(10000);
                 Environment.Exit(0);
             }
-            string ArgumentImputText = File.ReadAllText(args[0]);
+            string ArgumentInputText = File.ReadAllText(args[0]);
 
             if (Path.GetExtension(args[0]) is not ".txt" & Path.GetExtension(args[0]) is not ".TXT")
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Imput is not .txt file. Use the exported UNICODE TEXT file from excel::  Your file is -> {0}", Path.GetExtension(args[0]));
+                Console.WriteLine("Input is not .txt file. Use the exported UNICODE TEXT file from excel::  Your file is -> {0}", Path.GetExtension(args[0]));
                 Console.ReadLine();
                 return; // exit if  the file is not txt.
             }
 
             //Directories
-            string ImputDirectory = Path.GetDirectoryName(args[0]) + Path.DirectorySeparatorChar;
+            string InputDirectory = Path.GetDirectoryName(args[0]) + Path.DirectorySeparatorChar;
             string FileName = Path.GetFileNameWithoutExtension(args[0]);
             string FileWithExtansion = Path.GetDirectoryName(args[0]) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(args[0]) + Path.GetExtension(args[0]);
 
-            File.WriteAllText(FileWithExtansion, ArgumentImputText);
-            Utilities.ReplaceCrifAndSaveDat(FileWithExtansion, ImputDirectory);
+            File.WriteAllText(FileWithExtansion, ArgumentInputText);
+            Utilities.ReplaceCrifAndSaveDat(FileWithExtansion, InputDirectory);
 
             //It's time so save the file into fileserver
             Thread.Sleep(500);
@@ -55,7 +55,7 @@ namespace CRIF_Encrypt
                 Process process = new Process();
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = "cmd.exe";
-                startInfo.Arguments = Utilities.SignAndEncrypt(ImputDirectory, FileName);
+                startInfo.Arguments = Utilities.SignAndEncrypt(InputDirectory, FileName);
                 process.StartInfo = startInfo;
                 process.Start();
                 process.WaitForExit();
