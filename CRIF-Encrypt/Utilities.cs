@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -7,23 +7,26 @@ using System.Threading;
 
 namespace CRIF_Encrypt
 {
-    public static class Utilities
+    internal static class Utilities
     {
-        public static string ToUTF8(this string text)
+        internal static string ToUTF8(this string text)
         {
             return Encoding.UTF8.GetString(Encoding.Default.GetBytes(text));
         }
 
-        public static void StartingPoint()
+        internal static void StartingPoint()
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("(c) Hayk Jomardyan 2021. All rights reserved.  v15 \n");
+            Console.WriteLine("(c) Hayk Jomardyan 2022. All rights reserved.  v15 \n");
+			Console.WriteLine("https://github.com/jomardyan/CRIF-Import-Creator \n");
+
             Console.ResetColor();
             Console.WriteLine("Initializing, please  wait... \n");
+			
             Thread.Sleep(100);
         }
 
-        public static string SignAndEncrypt(string InputDir, string FileName)
+        internal static string SignAndEncrypt(string InputDir, string FileName)
         {
             string y = Path.GetFileNameWithoutExtension(FileName);
             //Long codding in order to be readable.
@@ -37,7 +40,7 @@ namespace CRIF_Encrypt
             return st.ToString();
         }
 
-        public static string CreateDatDir(String path, string FileName)
+        internal static string CreateDatDir(String path, string FileName)
         {
             Console.WriteLine("Creating datdir folder...");
             path = path + FileName + @"\"+ FileName + @"\";
@@ -61,7 +64,7 @@ namespace CRIF_Encrypt
             return path;
         }
 
-        public static void ReplaceCrifAndSaveDat(string FileName, String Directory)
+        internal static void ReplaceCrifAndSaveDat(string FileName, String Directory)
         {
             try
             {
