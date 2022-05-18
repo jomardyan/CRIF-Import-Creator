@@ -8,7 +8,6 @@ namespace CRIF_Encrypt
 {
     internal class Program
     {
-        // ToDo
         public static bool SentToFTP()
         {
             //Implement send to CRIF FTP SERVER

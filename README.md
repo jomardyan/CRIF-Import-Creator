@@ -3,28 +3,28 @@ Azure Pipelines: [![Build Status](https://jomardyan.visualstudio.com/jomardyan/_
 
 Windows: [![.NET](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetWindows.yml/badge.svg)](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetWindows.yml) , Ubuntu: [![.NET](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetUbuntu.yml/badge.svg)](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetUbuntu.yml)
  
-Create CRIF compatible import file according documentation using EXCEL Unicode export.
+Create import file for CRIF, according compatible documentation.
 
 **Instruction**
 
-1. **Save Ms Excel export file as Unicode Text (.txt, .TXT)**
+1. **Save MS Excel export file as Unicode Text (.txt, .TXT)**
 2. **Drag Exported file onto CRIF-Encrypt.exe**
-  1. **It&#39;s also possible pass the file path as an argument using CL.**
+  1. **It&#39;s also possible pass the file path as an argument using CLI.**
 3. **Program automatically output .gpg file, which is ready to import by CRIF system.**
 
 **How the program work**
 
-1. **Connvert encoding into UTF-8**
+1. **Convert working file encoding into UTF-8**
 2. **Add ^~ separator**
 3. **Convert to .DAT file**
-4. **Packing into ZIP Archive**
+4. **Packing into ZIP Archive as it is required**
 5. **Sign and encrypt (program will ask you to type sign password)**
-6. **More features soon...**
+6. **More features coming soon...**
 
 **Program run requirement**
 
 1. **Have installed and configured** [**Kleopatra (Gpg4win)**](https://www.gpg4win.org/download.html) **according CRIF requirements**
-2. **Have Installed** [**DOT.NET 5 Runtime**](https://dotnet.microsoft.com/download/dotnet/5.0/runtime)
+2. **Have Installed** [**DOT.NET 6 Runtime**](https://dotnet.microsoft.com/download/dotnet/6.0/runtime)
 
 
 MIT License
