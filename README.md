@@ -3,7 +3,7 @@ Azure Pipelines: [![Build Status](https://jomardyan.visualstudio.com/jomardyan/_
 
 Windows: [![.NET](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetWindows.yml/badge.svg)](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetWindows.yml) , Ubuntu: [![.NET](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetUbuntu.yml/badge.svg)](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/dotnetUbuntu.yml)
  
-Create import file for CRIF, according compatible documentation.
+Create import ready file for [CRIF](https://www.crif.pl/) data exchange system. 
 
 **Instruction**
 
