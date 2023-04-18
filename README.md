@@ -5,21 +5,20 @@ Windows: [![.NET](https://github.com/jomardyan/CRIF-Encrypt/actions/workflows/do
  
 Create import ready file for [CRIF](https://www.crif.pl/) data exchange system. 
 
-**Instruction**
+**Instructions:**
 
-1. **Save MS Excel export file as Unicode Text (.txt, .TXT)**
-2. **Drag Exported file onto CRIF-Encrypt.exe**
-  1. **It&#39;s also possible pass the file path as an argument using CLI.**
-3. **Program automatically output .gpg file, which is ready to import by CRIF system.**
+1. Save the MS Excel export file as Unicode Text (.txt, .TXT).
+2. Drag the exported file onto CRIF-Encrypt.exe.
+3. Alternatively, you can pass the file path as an argument using CLI.
+4. The program will automatically output a .gpg file, which is ready to be imported by the CRIF system.
 
-**How the program work**
-
-1. **Convert working file encoding into UTF-8**
-2. **Add ^~ separator**
-3. **Convert to .DAT file**
-4. **Packing into ZIP Archive as it is required**
-5. **Sign and encrypt (program will ask you to type sign password)**
-6. **More features coming soon...**
+**How the program works:**
+1. The working file's encoding is converted into UTF-8.
+2. The ^~ separator is added.
+3. It is converted to a .DAT file.
+4. It is packed into a ZIP archive as required.
+5. The file is signed and encrypted. The program will prompt you to enter the sign password.
+More features will be added soon...
 
 **Program run requirement**
 
