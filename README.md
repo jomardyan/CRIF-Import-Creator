@@ -22,7 +22,7 @@ More features will be added soon...
 
 **Program run requirement**
 
-1. **Have installed and configured** [**Kleopatra (Gpg4win)**](https://www.gpg4win.org/download.html) **according CRIF requirements**
+1. **Have installed and  configured** [**Kleopatra (Gpg4win)**](https://www.gpg4win.org/download.html) **according CRIF requirements**
 2. **Have Installed** [**DOT.NET 6 Runtime**](https://dotnet.microsoft.com/download/dotnet/6.0/runtime)
 
 
