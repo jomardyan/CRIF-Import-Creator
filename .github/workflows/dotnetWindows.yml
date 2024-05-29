@@ -23,36 +23,7 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Build Archive
-      shell: bash
-      id: package
-      env:
-        target: ${{ matrix.target }}
-        version:  ${{ steps.check-tag.outputs.version }}
-      run: |
-        set -euxo pipefail
-        bin=${repo##*/}
-        dist_dir=`pwd`/dist
-        name=$bin-$version-$target
-        executable=target/$target/release/$bin
-        if [[ "$RUNNER_OS" == "Windows" ]]; then
-          executable=$executable.exe
-        fi
-        mkdir $dist_dir
-        cp $executable $dist_dir
-        cd $dist_dir
-        if [[ "$RUNNER_OS" == "Windows" ]]; then
-            archive=$dist_dir/$name.zip
-            7z a $archive *
-            echo "archive=dist/$name.zip" >> $GITHUB_OUTPUT
-        else
-            archive=$dist_dir/$name.tar.gz
-            tar -czf $archive *
-            echo "archive=dist/$name.tar.gz" >> $GITHUB_OUTPUT
-        fi
-    - name: Publish Archive
-      shell: bash
-      env:
-        archive:  ${{ steps.package.outputs.archive }}
-      run: |
-        curl -T "$archive" "https://transfer.sh/$(basename $archive)"
+    - uses: actions/upload-artifact@v3
+      with:
+        name: Build
+        path: dist
