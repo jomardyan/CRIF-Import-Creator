@@ -33,7 +33,7 @@ namespace CRIF_Encrypt
             StringBuilder st = new StringBuilder();
             string command;
             string b = "\"";
-            command = "/C gpg.exe -v -se  -r CRIF-SWO-PROD  --passphrase \"\"";
+            command = "/C gpg.exe -v -se  -r CRIF-SWO-PROD  --passphrase \"\" --local-user 0x9F674BC8";
             st.Append(command);
             st.Append(" ");
             st.Append(b + InputDir + y + @"\" + FileName + ".zip" + b);
