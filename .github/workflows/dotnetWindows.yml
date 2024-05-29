@@ -31,20 +31,16 @@ jobs:
         version:  ${{ steps.check-tag.outputs.version }}
       run: |
         set -euxo pipefail
-
         bin=${repo##*/}
         dist_dir=`pwd`/dist
         name=$bin-$version-$target
         executable=target/$target/release/$bin
-
         if [[ "$RUNNER_OS" == "Windows" ]]; then
           executable=$executable.exe
         fi
-
         mkdir $dist_dir
         cp $executable $dist_dir
         cd $dist_dir
-
         if [[ "$RUNNER_OS" == "Windows" ]]; then
             archive=$dist_dir/$name.zip
             7z a $archive *
@@ -54,7 +50,6 @@ jobs:
             tar -czf $archive *
             echo "archive=dist/$name.tar.gz" >> $GITHUB_OUTPUT
         fi
-
     - name: Publish Archive
       shell: bash
       env:
