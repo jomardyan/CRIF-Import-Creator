@@ -15,6 +15,7 @@ namespace CRIF_Encrypt
 
         private static void Main(string[] args)
         {
+            Utilities.StartingPoint();
             if (args.Length == 0)
             {
                 Console.WriteLine("Please drag a file onto the program or pass the file as an argument.");
