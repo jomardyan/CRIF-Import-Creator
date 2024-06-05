@@ -3,71 +3,90 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
-
 namespace CRIF_Encrypt
 {
     internal class Program
     {
-        public static bool SentToFTP()
+        public static bool SendToFTP()
         {
-            //Implement send to CRIF FTP SERVER
+            // Implement send to CRIF FTP SERVER
             return true;
         }
 
         private static void Main(string[] args)
         {
-            if (args.Length != 0)
-            {
-                Console.WriteLine("Passed Argument: " + args[0]);
-            }
-            Utilities.StartingPoint();
             if (args.Length == 0)
             {
-                Console.WriteLine("Please drag a file onto program or pass the file as an argument.");
+                Console.WriteLine("Please drag a file onto the program or pass the file as an argument.");
                 Thread.Sleep(10000);
                 Environment.Exit(0);
             }
-            string ArgumentInputText = File.ReadAllText(args[0]);
 
-            if (Path.GetExtension(args[0]) is not ".txt" & Path.GetExtension(args[0]) is not ".TXT")
+            string inputFilePath = args[0];
+            Console.WriteLine("Passed Argument: " + inputFilePath);
+
+            if (!IsValidTextFile(inputFilePath))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Input is not .txt file. Use the exported UNICODE TEXT file from excel::  Your file is -> {0}", Path.GetExtension(args[0]));
+                Console.WriteLine("Input is not a .txt file. Use the exported UNICODE TEXT file from Excel. Your file is -> {0}", Path.GetExtension(inputFilePath));
                 Console.ReadLine();
-                return; // exit if  the file is not txt.
+                return; 
             }
 
-            //Directories
-            string InputDirectory = Path.GetDirectoryName(args[0]) + Path.DirectorySeparatorChar;
-            string FileName = Path.GetFileNameWithoutExtension(args[0]);
-            string FileWithExtansion = Path.GetDirectoryName(args[0]) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(args[0]) + Path.GetExtension(args[0]);
+            string inputText = File.ReadAllText(inputFilePath);
 
-            File.WriteAllText(FileWithExtansion, ArgumentInputText);
-            Utilities.ReplaceCrifAndSaveDat(FileWithExtansion, InputDirectory);
+            string inputDirectory = Path.GetDirectoryName(inputFilePath) + Path.DirectorySeparatorChar;
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(inputFilePath);
+            string fileWithExtension = inputDirectory + fileNameWithoutExtension + Path.GetExtension(inputFilePath);
 
-            //It's time so save the file into fileserver
+            File.WriteAllText(fileWithExtension, inputText);
+            Utilities.ReplaceCrifAndSaveDat(fileWithExtension, inputDirectory);
+
             Thread.Sleep(500);
-            //Try Sign end encrypt
+
+            if (!SignAndEncryptFile(inputDirectory, fileNameWithoutExtension))
+            {
+                Console.WriteLine("An error occurred during signing and encryption.");
+                return;
+            }
+
+            Console.WriteLine("--------------SIGN AND ENCRYPT FINISHED-------------------");
+            Console.WriteLine("---------All operations completed successfully------------");
+            Console.WriteLine("Type any key to exit...");
+            Console.ReadLine();
+        }
+
+        private static bool IsValidTextFile(string filePath)
+        {
+            string extension = Path.GetExtension(filePath);
+            return extension.Equals(".txt", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool SignAndEncryptFile(string inputDirectory, string fileNameWithoutExtension)
+        {
             try
             {
-                Console.WriteLine("Sign end encrypt...");
+                Console.WriteLine("Sign and encrypt...");
                 Process process = new Process();
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = "cmd.exe";
-                startInfo.Arguments = Utilities.SignAndEncrypt(InputDirectory, FileName);
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = Utilities.SignAndEncrypt(inputDirectory, fileNameWithoutExtension),
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
                 process.StartInfo = startInfo;
                 process.Start();
                 process.WaitForExit();
+
+                return process.ExitCode == 0;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Error: {0}", e.Message);
+                return false;
             }
-
-            Console.WriteLine("--------------SIGN AND ENCRYPT FINISEHD-------------------");
-            Console.WriteLine("---------All operations completed successfully------------");
-            Console.WriteLine("Type any key to exit...");
-            _ = Console.ReadLine();
         }
     }
 }
