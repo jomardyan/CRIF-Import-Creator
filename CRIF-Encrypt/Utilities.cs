@@ -97,8 +97,8 @@ namespace CRIF_Encrypt
             {
                 stringBuilder.AppendLine(lines[i]);
             }
-
-            return stringBuilder.ToString();
+            string newText = stringBuilder.ToString(); 
+            return newText.Remove(newText.TrimEnd().LastIndexOf(Environment.NewLine));
         }
     }
 }
