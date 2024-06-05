@@ -4,7 +4,6 @@ using System.IO.Compression;
 using System.Text;
 using System.Threading;
 
-
 namespace CRIF_Encrypt
 {
     internal static class Utilities
@@ -18,84 +17,88 @@ namespace CRIF_Encrypt
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("(c) Hayk Jomardyan 2022. All rights reserved.  v15 \n");
-			Console.WriteLine("https://github.com/jomardyan/CRIF-Import-Creator \n");
+            Console.WriteLine("https://github.com/jomardyan/CRIF-Import-Creator \n");
 
             Console.ResetColor();
-            Console.WriteLine("Initializing, please  wait... \n");
-			
+            Console.WriteLine("Initializing, please wait... \n");
             Thread.Sleep(100);
         }
 
-        internal static string SignAndEncrypt(string InputDir, string FileName)
+        internal static string SignAndEncrypt(string inputDir, string fileName)
         {
-            string y = Path.GetFileNameWithoutExtension(FileName);
-            //Long codding in order to be readable.
-            StringBuilder st = new StringBuilder();
-            string command;
-            string b = "\"";
-            command = "/C gpg.exe -v -se  -r CRIF-SWO-PROD  --passphrase \"\" --local-user 0x9F674BC8";
-            st.Append(command);
-            st.Append(" ");
-            st.Append(b + InputDir + y + @"\" + FileName + ".zip" + b);
-            return st.ToString();
+            string fileBaseName = Path.GetFileNameWithoutExtension(fileName);
+            string command = $"/C gpg.exe -v -se -r CRIF-SWO-PROD --passphrase \"\" --local-user 0x9F674BC8 \"{Path.Combine(inputDir, fileBaseName, $"{fileName}.zip")}\"";
+            return command;
         }
 
-        internal static string CreateDatDir(String path, string FileName)
+        internal static string CreateDatDir(string path, string fileName)
         {
+            string fullPath = Path.Combine(path, fileName, fileName);
             Console.WriteLine("Creating datdir folder...");
-            path = path + FileName + @"\"+ FileName + @"\";
             try
             {
-                // Determine whether the directory exists.
-                if (Directory.Exists(path))
+                if (Directory.Exists(fullPath))
                 {
-                    Console.WriteLine("That path exists already: " + path);
+                    Console.WriteLine($"That path exists already: {fullPath}");
                 }
                 else
                 {
-                    DirectoryInfo di = Directory.CreateDirectory(path);
-                    Console.WriteLine("The directory was created successfully at {0}. Path: {1}", Directory.GetCreationTime(path), (path));
+                    Directory.CreateDirectory(fullPath);
+                    Console.WriteLine($"The directory was created successfully at {Directory.GetCreationTime(fullPath)}. Path: {fullPath}");
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("The process failed: {0}", e.ToString());
+                Console.WriteLine($"The process failed: {e}");
             }
-            return path;
+            return fullPath;
         }
 
-        internal static void ReplaceCrifAndSaveDat(string FileName, String Directory)
+        internal static void ReplaceCrifAndSaveDat(string fileName, string directory)
         {
             try
             {
-                string y = Path.GetFileNameWithoutExtension(FileName);
-                string text = File.ReadAllText(FileName);
-                //text = text.ToUTF8();
-                text = text.Replace("	", "^~");
+                string fileBaseName = Path.GetFileNameWithoutExtension(fileName);
+                string text = File.ReadAllText(fileName);
+                text = text.Replace("\t", "^~");
 
-                //Remove first and last line from EXCEL export  TXT file.
-                int index = text.IndexOf(System.Environment.NewLine);
-                var newText = text.Substring(index + System.Environment.NewLine.Length);
-                newText = newText.Remove(newText.TrimEnd().LastIndexOf(Environment.NewLine));
+                text = RemoveFirstAndLastLines(text);
 
-                var datdir = CreateDatDir(Directory, y);
+                string datDir = CreateDatDir(directory, fileBaseName);
                 Thread.Sleep(500);
-                string DatOutput = datdir + y + ".dat";
-                File.WriteAllText(DatOutput, newText);
-                Console.WriteLine("Saved: {0}", DatOutput);
+
+                string datOutput = Path.Combine(datDir, $"{fileBaseName}.dat");
+                File.WriteAllText(datOutput, text);
+                Console.WriteLine($"Saved: {datOutput}");
                 Thread.Sleep(500);
-                string startPath = datdir;
-                string zipPath = Directory + y + @"\" + y + ".zip";
-                
-                Console.WriteLine("ZIP PATH:  " + zipPath);
-                ZipFile.CreateFromDirectory(startPath, zipPath);
-                
-                System.IO.Directory.Delete(datdir,true);
+
+                string zipPath = Path.Combine(directory, fileBaseName, $"{fileBaseName}.zip");
+                Console.WriteLine($"ZIP PATH: {zipPath}");
+                ZipFile.CreateFromDirectory(datDir, zipPath);
+
+                Directory.Delete(datDir, true);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine("Error: {0}", e.ToString());
+                Console.WriteLine($"Error: {e}");
             }
+        }
+
+        private static string RemoveFirstAndLastLines(string text)
+        {
+            string[] lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            if (lines.Length <= 2)
+            {
+                return string.Empty;
+            }
+
+            var stringBuilder = new StringBuilder();
+            for (int i = 1; i < lines.Length - 1; i++)
+            {
+                stringBuilder.AppendLine(lines[i]);
+            }
+
+            return stringBuilder.ToString();
         }
     }
 }
