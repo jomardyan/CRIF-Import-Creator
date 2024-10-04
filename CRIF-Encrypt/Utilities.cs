@@ -15,7 +15,7 @@ namespace CRIF_Encrypt
 
         internal static void StartingPoint()
         {
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("(c) Hayk Jomardyan 2022. All rights reserved.  v16 \n");
             Console.WriteLine("https://github.com/jomardyan/CRIF-Import-Creator \n");
 
