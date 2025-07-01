@@ -1,0 +1,187 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.4)'
+        required: true
+        type: string
+      create_tag:
+        description: 'Create git tag for this release'
+        required: true
+        type: boolean
+        default: true
+      prerelease:
+        description: 'Mark as pre-release'
+        required: true
+        type: boolean
+        default: false
+      include_debug:
+        description: 'Include debug builds'
+        required: true
+        type: boolean
+        default: false
+
+env:
+  DOTNET_VERSION: '6.0.x'
+  PROJECT_PATH: 'CRIF-Encrypt/CRIF-Encrypt.csproj'
+
+jobs:
+  manual-release:
+    name: Manual Release Build
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Update project version
+      shell: pwsh
+      run: |
+        $projectPath = "${{ env.PROJECT_PATH }}"
+        [xml]$proj = Get-Content $projectPath
+        $proj.Project.PropertyGroup.Version = "${{ inputs.version }}"
+        $proj.Save($projectPath)
+        Write-Host "Updated project version to ${{ inputs.version }}"
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_PATH }}
+
+    - name: Build Release
+      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
+
+    - name: Build Debug (if requested)
+      if: inputs.include_debug == true
+      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Debug --no-restore
+
+    - name: Publish Release Builds
+      shell: pwsh
+      run: |
+        # Framework Dependent
+        dotnet publish ${{ env.PROJECT_PATH }} `
+          --configuration Release `
+          --runtime win-x64 `
+          --output ./publish/release/win-x64-fd `
+          --no-self-contained
+        
+        # Self-Contained x64
+        dotnet publish ${{ env.PROJECT_PATH }} `
+          --configuration Release `
+          --runtime win-x64 `
+          --output ./publish/release/win-x64-sc `
+          --self-contained true `
+          -p:PublishSingleFile=true `
+          -p:PublishTrimmed=true `
+          -p:IncludeNativeLibrariesForSelfExtract=true
+        
+        # Self-Contained x86
+        dotnet publish ${{ env.PROJECT_PATH }} `
+          --configuration Release `
+          --runtime win-x86 `
+          --output ./publish/release/win-x86-sc `
+          --self-contained true `
+          -p:PublishSingleFile=true `
+          -p:PublishTrimmed=true `
+          -p:IncludeNativeLibrariesForSelfExtract=true
+
+    - name: Publish Debug Builds (if requested)
+      if: inputs.include_debug == true
+      shell: pwsh
+      run: |
+        # Debug Self-Contained x64
+        dotnet publish ${{ env.PROJECT_PATH }} `
+          --configuration Debug `
+          --runtime win-x64 `
+          --output ./publish/debug/win-x64-sc `
+          --self-contained true `
+          -p:PublishSingleFile=true `
+          -p:IncludeNativeLibrariesForSelfExtract=true
+
+    - name: Create Release Archives
+      shell: pwsh
+      run: |
+        New-Item -ItemType Directory -Force -Path ./artifacts
+        
+        # Release builds
+        Compress-Archive -Path "./publish/release/win-x64-fd/*" -DestinationPath "./artifacts/CRIF-Encrypt-v${{ inputs.version }}-win-x64-framework-dependent.zip"
+        Compress-Archive -Path "./publish/release/win-x64-sc/*" -DestinationPath "./artifacts/CRIF-Encrypt-v${{ inputs.version }}-win-x64-standalone.zip"
+        Compress-Archive -Path "./publish/release/win-x86-sc/*" -DestinationPath "./artifacts/CRIF-Encrypt-v${{ inputs.version }}-win-x86-standalone.zip"
+        
+        # Debug builds (if requested)
+        if ("${{ inputs.include_debug }}" -eq "true") {
+          Compress-Archive -Path "./publish/debug/win-x64-sc/*" -DestinationPath "./artifacts/CRIF-Encrypt-v${{ inputs.version }}-win-x64-standalone-debug.zip"
+        }
+        
+        Get-ChildItem ./artifacts
+
+    - name: Create Git Tag
+      if: inputs.create_tag == true
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -a "v${{ inputs.version }}" -m "Release v${{ inputs.version }}"
+        git push origin "v${{ inputs.version }}"
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ inputs.version }}
+        name: CRIF-Encrypt v${{ inputs.version }}
+        files: ./artifacts/*.zip
+        prerelease: ${{ inputs.prerelease }}
+        body: |
+          ## CRIF-Encrypt v${{ inputs.version }}
+          
+          This is a manual release created on ${{ github.event.head_commit.timestamp }}.
+          
+          ### 📦 Downloads
+          
+          **🎯 Recommended:**
+          - `CRIF-Encrypt-v${{ inputs.version }}-win-x64-standalone.zip` - Windows 64-bit, no .NET required
+          
+          **🔧 Other Options:**
+          - `CRIF-Encrypt-v${{ inputs.version }}-win-x86-standalone.zip` - Windows 32-bit, no .NET required
+          - `CRIF-Encrypt-v${{ inputs.version }}-win-x64-framework-dependent.zip` - Requires .NET 6.0 runtime
+          ${{ inputs.include_debug == true && '- `CRIF-Encrypt-v' || '' }}${{ inputs.include_debug == true && inputs.version || '' }}${{ inputs.include_debug == true && '-win-x64-standalone-debug.zip` - Debug version for troubleshooting' || '' }}
+          
+          ### 🚀 Features
+          - Optimized async/await implementation
+          - Enhanced error handling with colored console output
+          - Centralized configuration management
+          - Improved file processing performance
+          - Better user experience and feedback
+          
+          ### 💻 System Requirements
+          - Windows 10/11
+          - For framework-dependent version: .NET 6.0 Runtime
+          
+          ### 📋 Usage
+          ```bash
+          # Drag and drop a .txt file onto CRIF-Encrypt.exe
+          # OR run from command line:
+          CRIF-Encrypt.exe "path/to/your/file.txt"
+          ```
+          
+          ---
+          
+          **Release Type:** ${{ inputs.prerelease == true && 'Pre-release' || 'Stable Release' }}  
+          **Build Configuration:** Release${{ inputs.include_debug == true && ' + Debug' || '' }}  
+          **Created:** ${{ github.event.head_commit.timestamp }}
+        draft: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: CRIF-Encrypt-Manual-Release-v${{ inputs.version }}
+        path: ./artifacts/*.zip
+        retention-days: 90
