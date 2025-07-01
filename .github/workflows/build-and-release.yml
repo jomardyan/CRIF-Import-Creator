@@ -1,0 +1,201 @@
+name: Build and Release CRIF-Encrypt
+
+on:
+  push:
+    branches: [ master, main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '6.0.x'
+  PROJECT_PATH: 'CRIF-Encrypt/CRIF-Encrypt.csproj'
+  BUILD_CONFIGURATION: 'Release'
+
+jobs:
+  build:
+    name: Build Application
+    runs-on: windows-latest
+    
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_PATH }}
+
+    - name: Build application
+      run: dotnet build ${{ env.PROJECT_PATH }} --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
+
+    - name: Run tests (if any)
+      run: dotnet test --configuration ${{ env.BUILD_CONFIGURATION }} --no-build --verbosity normal
+      continue-on-error: true
+
+    - name: Get version from project
+      id: version
+      shell: pwsh
+      run: |
+        [xml]$proj = Get-Content ${{ env.PROJECT_PATH }}
+        $version = $proj.Project.PropertyGroup.Version
+        if ([string]::IsNullOrEmpty($version)) {
+          $version = "1.0.0"
+        }
+        echo "version=$version" >> $env:GITHUB_OUTPUT
+        echo "Version: $version"
+
+    - name: Publish Windows x64 (Framework Dependent)
+      run: |
+        dotnet publish ${{ env.PROJECT_PATH }} `
+          --configuration ${{ env.BUILD_CONFIGURATION }} `
+          --runtime win-x64 `
+          --output ./publish/win-x64-fd `
+          --no-self-contained
+
+    - name: Publish Windows x64 (Self-Contained)
+      run: |
+        dotnet publish ${{ env.PROJECT_PATH }} `
+          --configuration ${{ env.BUILD_CONFIGURATION }} `
+          --runtime win-x64 `
+          --output ./publish/win-x64-sc `
+          --self-contained true `
+          -p:PublishSingleFile=true `
+          -p:PublishTrimmed=true `
+          -p:IncludeNativeLibrariesForSelfExtract=true
+
+    - name: Publish Windows x86 (Self-Contained)
+      run: |
+        dotnet publish ${{ env.PROJECT_PATH }} `
+          --configuration ${{ env.BUILD_CONFIGURATION }} `
+          --runtime win-x86 `
+          --output ./publish/win-x86-sc `
+          --self-contained true `
+          -p:PublishSingleFile=true `
+          -p:PublishTrimmed=true `
+          -p:IncludeNativeLibrariesForSelfExtract=true
+
+    - name: Create ZIP archives
+      shell: pwsh
+      run: |
+        # Create output directory
+        New-Item -ItemType Directory -Force -Path ./artifacts
+        
+        # Create ZIP for Framework Dependent
+        Compress-Archive -Path "./publish/win-x64-fd/*" -DestinationPath "./artifacts/CRIF-Encrypt-v${{ steps.version.outputs.version }}-win-x64-framework-dependent.zip"
+        
+        # Create ZIP for Self-Contained x64
+        Compress-Archive -Path "./publish/win-x64-sc/*" -DestinationPath "./artifacts/CRIF-Encrypt-v${{ steps.version.outputs.version }}-win-x64-standalone.zip"
+        
+        # Create ZIP for Self-Contained x86
+        Compress-Archive -Path "./publish/win-x86-sc/*" -DestinationPath "./artifacts/CRIF-Encrypt-v${{ steps.version.outputs.version }}-win-x86-standalone.zip"
+        
+        # List created artifacts
+        Get-ChildItem ./artifacts
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: CRIF-Encrypt-Binaries-v${{ steps.version.outputs.version }}
+        path: ./artifacts/*.zip
+        retention-days: 30
+
+    - name: Upload Framework Dependent Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: Framework-Dependent-Build
+        path: ./publish/win-x64-fd/
+        retention-days: 7
+
+    - name: Upload Standalone x64 Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: Standalone-x64-Build
+        path: ./publish/win-x64-sc/
+        retention-days: 7
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: CRIF-Encrypt-Binaries-v${{ needs.build.outputs.version }}
+        path: ./artifacts
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./artifacts/*.zip
+        name: CRIF-Encrypt v${{ needs.build.outputs.version }}
+        body: |
+          ## CRIF-Encrypt v${{ needs.build.outputs.version }}
+          
+          ### What's New
+          - Optimized C# application with async/await improvements
+          - Enhanced error handling and user experience
+          - Centralized configuration management
+          - Better performance and reliability
+          
+          ### Download Options
+          
+          **🎯 Recommended for most users:**
+          - `CRIF-Encrypt-v${{ needs.build.outputs.version }}-win-x64-standalone.zip` - No .NET installation required (64-bit)
+          
+          **📦 Alternative Downloads:**
+          - `CRIF-Encrypt-v${{ needs.build.outputs.version }}-win-x86-standalone.zip` - No .NET installation required (32-bit)
+          - `CRIF-Encrypt-v${{ needs.build.outputs.version }}-win-x64-framework-dependent.zip` - Requires .NET 6.0 runtime
+          
+          ### System Requirements
+          - Windows 10/11 (64-bit or 32-bit)
+          - For framework-dependent version: .NET 6.0 Runtime
+          
+          ### Installation
+          1. Download the appropriate ZIP file
+          2. Extract to your desired location
+          3. Run `CRIF-Encrypt.exe`
+          
+          ### Usage
+          Drag and drop a .txt file onto the executable or run from command line:
+          ```
+          CRIF-Encrypt.exe "path/to/your/file.txt"
+          ```
+        draft: false
+        prerelease: false
+        generate_release_notes: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify:
+    name: Build Notification
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify Success
+      if: needs.build.result == 'success'
+      run: |
+        echo "✅ Build completed successfully!"
+        echo "Version: v${{ needs.build.outputs.version }}"
+        echo "Artifacts are ready for download."
+        
+    - name: Notify Failure
+      if: needs.build.result == 'failure'
+      run: |
+        echo "❌ Build failed!"
+        echo "Check the build logs for details."
+        exit 1
