@@ -27,11 +27,16 @@ namespace CRIF_Encrypt
             string inputFilePath = args[0];
             Console.WriteLine($"Processing file: {inputFilePath}");
 
+            // Start timing all operations
+            var stopwatch = Stopwatch.StartNew();
+
             if (!IsValidTextFile(inputFilePath))
             {
+                stopwatch.Stop();
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Input is not a .txt file. Use the exported UNICODE TEXT file from Excel. Your file extension is: {Path.GetExtension(inputFilePath)}");
                 Console.ResetColor();
+                Console.WriteLine($"Total elapsed time: {stopwatch.Elapsed:mm\\:ss\\.fff}");
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
                 return; 
@@ -48,34 +53,44 @@ namespace CRIF_Encrypt
 
                 if (!await SignAndEncryptFileAsync(inputDirectory, fileNameWithoutExtension))
                 {
+                    stopwatch.Stop();
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("An error occurred during signing and encryption.");
                     Console.ResetColor();
+                    Console.WriteLine($"Total elapsed time: {stopwatch.Elapsed:mm\\:ss\\.fff}");
                     return;
                 }
 
+                stopwatch.Stop();
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("--------------SIGN AND ENCRYPT FINISHED-------------------");
                 Console.WriteLine("---------All operations completed successfully------------");
+                Console.WriteLine($"Total elapsed time: {stopwatch.Elapsed:mm\\:ss\\.fff}");
                 Console.ResetColor();
             }
             catch (FileNotFoundException)
             {
+                stopwatch.Stop();
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"File not found: {inputFilePath}");
                 Console.ResetColor();
+                Console.WriteLine($"Total elapsed time: {stopwatch.Elapsed:mm\\:ss\\.fff}");
             }
             catch (UnauthorizedAccessException)
             {
+                stopwatch.Stop();
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Access denied to file: {inputFilePath}");
                 Console.ResetColor();
+                Console.WriteLine($"Total elapsed time: {stopwatch.Elapsed:mm\\:ss\\.fff}");
             }
             catch (Exception ex)
             {
+                stopwatch.Stop();
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"An unexpected error occurred: {ex.Message}");
                 Console.ResetColor();
+                Console.WriteLine($"Total elapsed time: {stopwatch.Elapsed:mm\\:ss\\.fff}");
             }
             
             Console.WriteLine("Press any key to exit...");
