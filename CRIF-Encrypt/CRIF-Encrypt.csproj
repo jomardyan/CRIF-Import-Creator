@@ -7,7 +7,14 @@
     <ApplicationIcon>database.ico</ApplicationIcon>
     <Version>1.0.3</Version>
     <Authors>Hayk Jomardyan</Authors>
-    <Copyright>JHC</Copyright>
+    <Company>JHC</Company>
+    <Product>CRIF Import Creator</Product>
+    <Description>A tool for processing and encrypting CRIF import files</Description>
+    <Copyright>© 2022-2025 Hayk Jomardyan. All rights reserved.</Copyright>
+    <AssemblyTitle>CRIF Import Creator</AssemblyTitle>
+    <AssemblyDescription>A tool for processing and encrypting CRIF import files</AssemblyDescription>
+    <AssemblyCompany>JHC</AssemblyCompany>
+    <AssemblyProduct>CRIF Import Creator</AssemblyProduct>
     <PackageLicenseExpression />
     <PackageProjectUrl>https://github.com/jomardyan/CRIF-Import-Creator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jomardyan/CRIF-Import-Creator</RepositoryUrl>
